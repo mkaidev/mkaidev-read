@@ -1,8 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, Loader2 } from "lucide-react";
 import { useFormStatus } from "react-dom";
+import { ArrowDown, ArrowUp, Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 export function SubmitButton({ text }: { text: string }) {
   const { pending } = useFormStatus();
