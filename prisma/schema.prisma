@@ -18,6 +18,8 @@ model User {
   createdSubreadits Subreadit[]
 
   createdAt DateTime @default(now())
+
+  posts Post[]
 }
 
 model Subreadit {
@@ -28,4 +30,20 @@ model Subreadit {
   updatedAt   DateTime @updatedAt
   User        User?    @relation(fields: [userId], references: [id])
   userId      String?
+
+  posts Post[]
+}
+
+model Post {
+  id          String  @id @default(uuid())
+  title       String
+  textContent Json?
+  imageString String?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Subreadit Subreadit? @relation(fields: [subName], references: [name])
+  subName   String?
+  User      User?      @relation(fields: [userId], references: [id])
+  userId    String?
 }
