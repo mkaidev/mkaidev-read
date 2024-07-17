@@ -2,7 +2,8 @@
 
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { Prisma } from "@prisma/client";
+import { Prisma, TypeOfVote } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 import { JSONContent } from "@tiptap/react";
 
 import prisma from "./lib/db";
@@ -112,7 +113,7 @@ export async function updateSubDescription(prevState: any, formData: FormData) {
 
 export async function createPost(
   { jsonContent }: { jsonContent: JSONContent | null },
-  formData: FormData,
+  formData: FormData
 ) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
@@ -136,4 +137,77 @@ export async function createPost(
   });
 
   return redirect(`/post/${data.id}`);
+}
+
+export async function handleVote(formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/api/auth/login");
+  }
+
+  const postId = formData.get("postId") as string;
+  const voteDirection = formData.get("voteDirection") as TypeOfVote;
+
+  const vote = await prisma.vote.findFirst({
+    where: {
+      postId: postId,
+      userId: user.id,
+    },
+  });
+
+  if (vote) {
+    if (vote.voteType === voteDirection) {
+      await prisma.vote.delete({
+        where: {
+          id: vote.id,
+        },
+      });
+
+      return revalidatePath("/", "page");
+    } else {
+      await prisma.vote.update({
+        where: {
+          id: vote.id,
+        },
+        data: {
+          voteType: voteDirection,
+        },
+      });
+      return revalidatePath("/", "page");
+    }
+  }
+
+  await prisma.vote.create({
+    data: {
+      voteType: voteDirection,
+      userId: user.id,
+      postId: postId,
+    },
+  });
+
+  return revalidatePath("/", "page");
+}
+
+export async function createComment(formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/api/auth/login");
+  }
+
+  const comment = formData.get("comment") as string;
+  const postId = formData.get("postId") as string;
+
+  const data = await prisma.comment.create({
+    data: {
+      text: comment,
+      userId: user.id,
+      postId: postId,
+    },
+  });
+
+  revalidatePath(`/post/${postId}`);
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Text, Video } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 
@@ -45,20 +45,11 @@ export default function CreatePostRoute({
 }: {
   params: { id: string };
 }) {
-  const [isMounted, setIsMounted] = useState(false);
   const [imageUrl, setImageUrl] = useState<null | string>(null);
   const [json, setJson] = useState<null | JSONContent>(null);
   const [title, setTitle] = useState<null | string>(null);
 
   const createPostReadit = createPost.bind(null, { jsonContent: json });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <div className="max-w-[1000px] mx-auto flex gap-x-10 mt-4 px-4">

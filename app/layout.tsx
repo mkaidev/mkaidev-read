@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "./globals.css";
-
 import { Navbar } from "./components/Navbar";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -16,8 +15,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  community,
 }: Readonly<{
   children: React.ReactNode;
+  community: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -30,6 +31,7 @@ export default function RootLayout({
         >
           <Navbar />
           {children}
+          {community}
           <Toaster />
         </ThemeProvider>
       </body>

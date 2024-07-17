@@ -94,7 +94,7 @@ export function TipTapEditor({
       <Menubar editor={editor} />
       <EditorContent
         editor={editor}
-        className="dark:bg-slate-200/80 rounded-lg border p-2 min-h-[150px] mt-2"
+        className="rounded-lg border p-2 min-h-[150px] mt-2"
       />
     </div>
   );
